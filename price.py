@@ -43,7 +43,7 @@ def predict_house_price(house_details, historical_prices, months):
     {house_details}
     
     Historical prices (most recent 12 months):
-    {', '.join([f'${price:,.2f}' for price in historical_prices])}
+    {', '.join([f'Rs{price:,.2f}' for price in historical_prices])}
     
     Predict the house price for the next {months} months (one prediction per month).
     Consider market trends, historical data, seasonal variations, economic factors, and property features.
@@ -75,10 +75,10 @@ def create_line_chart(historical_prices, predictions):
     plt.axvline(x=0, color='r', linestyle='--', label='Current')
     plt.title('Historical and Predicted House Prices')
     plt.xlabel('Months (Negative = Past, Positive = Future)')
-    plt.ylabel('Price ($)')
+    plt.ylabel('Price (Rs)')
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.7)
-    plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x:,.0f}'))
+    plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'Rs{x:,.0f}'))
     
     return plt
 
@@ -92,7 +92,7 @@ def main():
     square_feet = st.number_input("Square Feet", min_value=100, value=1500)
     year_built = st.number_input("Year Built", min_value=1800, max_value=datetime.now().year, value=2000)
     lot_size = st.number_input("Lot Size (sqft)", min_value=100, value=5000)
-    current_price = st.number_input("Current Price ($)", min_value=1000, value=300000)
+    current_price = st.number_input("Current Price (Rs)", min_value=1000, value=300000)
     months = st.number_input("Number of months to predict", min_value=1, max_value=120, value=12)
 
     if st.button("Predict Future Prices"):
@@ -105,7 +105,7 @@ def main():
         Square Feet: {square_feet}
         Year Built: {year_built}
         Lot Size: {lot_size} sqft
-        Current Price: ${current_price:,}
+        Current Price: Rs{current_price:,}
         """
         
         with st.spinner("Predicting prices..."):
@@ -116,8 +116,8 @@ def main():
             for pred in predictions:
                 future_date = datetime.now() + timedelta(days=30*pred['month'])
                 price_change = pred['price'] - current_price
-                st.markdown(f"Month {pred['month']} ({future_date.strftime('%B %Y')}): ${pred['price']:,.2f} "
-                          f"${price_change:+,.2f}")
+                st.markdown(f"Month {pred['month']} ({future_date.strftime('%B %Y')}): Rs{pred['price']:,.2f} "
+                          f"Rs{price_change:+,.2f}")
             
             chart = create_line_chart(historical_prices, predictions)
             st.pyplot(chart)
